@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const connect = require("./config/dbConn")
 const user = require('./route/user')
 const auth = require('./route/auth')
+const job = require('./route/job')
 
 const PORT = process.env.PORT || 5000;
 
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({
 // Routes
 app.use("/user", user)
 app.use("/auth", auth)
+app.use("/job", job)
 
 app.get("/", (req, res, next) => {
     console.log("test run")
