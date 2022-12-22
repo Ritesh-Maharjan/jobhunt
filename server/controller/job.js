@@ -90,7 +90,6 @@ const applyJob = asyncHandler(async (req, res, next) => {
  * applications:  RESTful GET request returning all application objects
  */
 const applications = asyncHandler(async (req, res, next) => {
-  console.log(req.user);
   const allApplicaton = await Application.find({
     userId: req.user.id,
   }).populate("jobId");
@@ -109,7 +108,6 @@ const jobApplied = asyncHandler(async (req, res, next) => {
     userId: req.user.id,
     jobId: id,
   });
-  console.log(allApplicaton);
 
   if (allApplicaton.length === 0) return res.send(false);
 
