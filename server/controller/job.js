@@ -114,6 +114,22 @@ const jobApplied = asyncHandler(async (req, res, next) => {
   return res.send(true);
 });
 
+/**
+ * updateFeature:  RESTful PUT request returning a particular job object
+ * @param id: string
+ */
+const updateFeature = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const previousFeatured = await Job.findById(id).select("featured");
+
+  const isFeatured = await Job.findByIdAndUpdate(id, {
+    featured: !previousFeatured.featured
+  });
+
+  if (isFeatured) return res.json({ msg: "Featured has been changed" });
+});
+
 module.exports = {
   getAllJobs,
   getJob,
@@ -123,4 +139,5 @@ module.exports = {
   applyJob,
   applications,
   jobApplied,
+  updateFeature,
 };

@@ -16,21 +16,22 @@ const verifyToken = asyncHandler(async (req, res, next) => {
 });
 
 const isCompany = asyncHandler(async (req, res, next) => {
-  if (req.user.roles !== "Company")
+  if (req.user?.roles !== "Company")
     return res.status(403).json({ msg: "Not authorized" });
   next();
 });
 
 // checking if the user is job seeker
 const isJobSeeker = asyncHandler(async (req, res, next) => {
-  if (req.user.roles !== "Job seeker")
+  if (req.user?.roles !== "Job seeker")
     return res.status(403).json({ msg: "Not authorized" });
   next();
 });
 
 // checking if the user is admin
 const isAdmin = asyncHandler(async (req, res, next) => {
-  if (req.user.roles !== "admin")
+  console.log(req.user.roles)
+  if (req.user?.roles !== "Admin")
     return res.status(403).json({ msg: "Not authorized" });
   next();
 });

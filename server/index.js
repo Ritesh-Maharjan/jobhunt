@@ -8,6 +8,7 @@ const connect = require("./config/dbConn")
 const user = require('./route/user')
 const auth = require('./route/auth')
 const job = require('./route/job')
+const admin = require('./route/admin')
 
 const PORT = process.env.PORT || 5000;
 
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({
 app.use("/user", user)
 app.use("/auth", auth)
 app.use("/job", job)
+app.use("/admin", admin)
 
 app.get("/", (req, res, next) => {
     console.log("test run")

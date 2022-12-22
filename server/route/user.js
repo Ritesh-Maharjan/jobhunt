@@ -1,7 +1,12 @@
 const express = require("express");
-const getUser = require("../controller/user").getUser;
+const { getUser, updateUser, deleteUser } = require("../controller/user");
+const { verifyToken } = require("../middleware/auth");
 const router = express.Router();
 
-router.all("").get("/", getUser);
+router
+  .all("")
+  .get("/", verifyToken, getUser)
+  .put("/", verifyToken, updateUser)
+  .delete("/", verifyToken, deleteUser);
 
 module.exports = router;
