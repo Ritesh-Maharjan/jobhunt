@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const Application = require("../model/Application");
 const Job = require("../model/Job");
 const User = require("../model/User");
 
@@ -41,12 +42,8 @@ const createJob = asyncHandler(async (req, res, next) => {
   )
     return res.json({ msg: "All required fields are missing" });
 
-  console.log(req.id);
   const user = await User.findById(req.id).select(["name", "avatar", "-_id"]);
-  console.log(user);
   const job = await Job.create({ ...req.body, createdBy: user });
-
-  console.log(job);
 
   if (job) return res.json({ msg: "job created successfully" });
 });
@@ -75,4 +72,19 @@ const deleteJob = asyncHandler(async (req, res, next) => {
     res.json({"msg": "Deleted successfully"});
   });
 
-module.exports = { getAllJobs, getJob, createJob, updateJob, deleteJob };
+  /**
+ * updateJob:  RESTful PUT request returning JSON object(s)
+ * @param id: string
+ */
+const applyJob = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+
+    console.log(id)
+    console.log(req.id)
+    const applied = await Application.create({ jobId: id, userId: req.id})
+    console.log(applied)
+    
+    if(applied) res.json({"msg": "Applied to job successfully"})
+  });
+
+module.exports = { getAllJobs, getJob, createJob, updateJob, deleteJob, applyJob };
