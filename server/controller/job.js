@@ -32,6 +32,7 @@ const createJob = asyncHandler(async (req, res, next) => {
   const { jobTitle, jobCategory, jobType, salary, deadline, education } =
     req.body;
 
+    const userId = req.user.id
   if (
     !jobTitle ||
     !jobCategory ||
@@ -42,7 +43,7 @@ const createJob = asyncHandler(async (req, res, next) => {
   )
     return res.json({ msg: "All required fields are missing" });
 
-  const user = await User.findById(req.id).select(["name", "avatar", "-_id"]);
+  const user = await User.findById(userId).select(["name", "avatar", "-_id"]);
   const job = await Job.create({ ...req.body, createdBy: user });
 
   if (job) return res.json({ msg: "job created successfully" });
@@ -54,6 +55,8 @@ const createJob = asyncHandler(async (req, res, next) => {
  */
 const updateJob = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
+    console.log(req.user)
+    console.log(id)
     const job = await Job.findByIdAndUpdate(id, req.body);
 
     if(!job) return res.json({"msg": "No job found with that id"})
@@ -80,8 +83,8 @@ const applyJob = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
 
     console.log(id)
-    console.log(req.id)
-    const applied = await Application.create({ jobId: id, userId: req.id})
+    console.log(req.user.id)
+    const applied = await Application.create({ jobId: id, userId: req.user.id})
     console.log(applied)
     
     if(applied) res.json({"msg": "Applied to job successfully"})

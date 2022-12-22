@@ -3,7 +3,6 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
-const { update } = require("../model/User");
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
@@ -27,17 +26,20 @@ const login = asyncHandler(async (req, res, next) => {
   if (!email) return res.json({ msg: "email required" });
   if (!password) return res.json({ msg: "password required" });
 
-  const hash = await User.findOne({ email }).select("password").exec();
+  const hash = await User.findOne({ email })
+    .select(["password", "roles"])
+    .exec();
 
   if (!hash) return res.json({ msg: "No user found with that email" });
   // check password
   const samePassword = bcrypt.compareSync(password, hash.password);
-
+  
   if (!samePassword) return res.json({ msg: "Invalid credentials" });
 
   const token = jwt.sign(
     {
       id: hash._id,
+      roles: hash.roles,
     },
     TOKEN_SECRET,
     {}
@@ -58,7 +60,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
       msg: "Old password and new password should be different",
     });
 
-  //   get the password from database
+  // get the password from database
   const { id } = req;
   const { password } = await User.findById(id).select("password");
 
