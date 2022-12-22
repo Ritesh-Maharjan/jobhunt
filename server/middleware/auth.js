@@ -21,6 +21,20 @@ const isCompany = asyncHandler(async (req, res, next) => {
   next();
 });
 
+// checking if the user is job seeker
+const isJobSeeker = asyncHandler(async (req, res, next) => {
+  if (req.user.roles !== "Job seeker")
+    return res.status(403).json({ msg: "Not authorized" });
+  next();
+});
+
+// checking if the user is admin
+const isAdmin = asyncHandler(async (req, res, next) => {
+  if (req.user.roles !== "admin")
+    return res.status(403).json({ msg: "Not authorized" });
+  next();
+});
+
 // checking if the job is created by same user before doing anything to the job
 const isOwner = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -33,4 +47,7 @@ const isOwner = asyncHandler(async (req, res, next) => {
   next();
 });
 
-module.exports = { verifyToken, isCompany, isOwner };
+
+
+
+module.exports = { verifyToken, isCompany, isOwner, isJobSeeker, isAdmin };
