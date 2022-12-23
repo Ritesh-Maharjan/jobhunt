@@ -4,9 +4,14 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 
+
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
 const signup = asyncHandler(async (req, res, next) => {
+
+  console.log(req.file)
+  console.log(req.body)
+
   const password = req.body.password;
 
   if (!password) return res.json({ msg: "password required" });
@@ -14,7 +19,7 @@ const signup = asyncHandler(async (req, res, next) => {
   // hashing the password for our database
   const hash = bcrypt.hashSync(password, saltRounds);
 
-  const user = await User.create({ ...req.body, password: hash });
+  const user = await User.create({ ...req.body, password: hash, avatar: req.file.path });
 
   if (user) res.json({ msg: "Account created successfully" });
 });

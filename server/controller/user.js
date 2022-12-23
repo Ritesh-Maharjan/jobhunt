@@ -1,5 +1,6 @@
 const User = require("../model/User");
 const asyncHandler = require("express-async-handler");
+const fs = require("fs")
 
 /**
  * getAllUser:  RESTful GET request returning all job objects
@@ -26,6 +27,13 @@ const getUser = asyncHandler(async (req, res, next) => {
 const updateUser = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
   const { name, password, roles } = req.body;
+
+  if(req.file){
+    console.log("Not running")
+    const user = await User.findByIdAndUpdate(id, {avatar: req.file.path})
+    fs.unlinkSync(user.avatar)
+    return
+  }
 
   if (name || password || roles)
     return res.json({ msg: "Unable to update these fields" });

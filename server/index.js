@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
-// Using Node.js `require()`
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const path = require("path")
 const connect = require("./config/dbConn")
 const user = require('./route/user')
 const auth = require('./route/auth')
@@ -17,6 +17,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+app.use('/public', express.static(path.join(__dirname, 'public')))
 
 // Routes
 app.use("/user", user)
