@@ -8,7 +8,7 @@ router
   .all("")
   .get("/users", verifyToken, isAdmin, getAllUser)
   .delete("/users/:id", verifyToken, isAdmin, deleteUser)
-  .put("/isFeatured/:id", verifyToken, isAdmin, updateFeature)
+  .put("/changeFeature/:id", verifyToken, isAdmin, updateFeature)
   .delete("/jobs/:id", verifyToken, isAdmin, deleteJob);
 
 module.exports = router;

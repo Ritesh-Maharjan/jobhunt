@@ -98,12 +98,13 @@ const applications = asyncHandler(async (req, res, next) => {
  */
 const jobApplied = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-
+  
   const allApplicaton = await Application.find({
     userId: req.user.id,
     jobId: id,
   });
 
+  console.log(allApplicaton)
   if (allApplicaton.length === 0) return res.send(false);
 
   return res.send(true);
