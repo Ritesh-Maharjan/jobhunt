@@ -1,14 +1,12 @@
-const { application } = require("express");
 const asyncHandler = require("express-async-handler");
 const Application = require("../model/Application");
 const Job = require("../model/Job");
-const User = require("../model/User");
 
 /**
  * getAlljob:  RESTful GET request returning all job objects
  */
 const getAllJobs = asyncHandler(async (req, res, next) => {
-  const job = await Job.find({});
+  const job = await Job.find({}).populate("createdBy", {name:1, avatar:1});
   res.json(job);
 });
 
@@ -19,7 +17,7 @@ const getAllJobs = asyncHandler(async (req, res, next) => {
 const getJob = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const job = await Job.findById(id);
+  const job = await Job.findById(id).populate("createdBy", {name:1, avatar:1});
   if (!job) return res.json({ msg: "No job found with that id" });
   res.json(job);
 });
@@ -43,8 +41,7 @@ const createJob = asyncHandler(async (req, res, next) => {
   )
     return res.json({ msg: "All required fields are missing" });
 
-  const user = await User.findById(userId).select(["name", "avatar", "-_id"]);
-  const job = await Job.create({ ...req.body, createdBy: user });
+  const job = await Job.create({ ...req.body, createdBy: userId });
 
   if (job) return res.json({ msg: "job created successfully" });
 });
@@ -55,8 +52,6 @@ const createJob = asyncHandler(async (req, res, next) => {
  */
 const updateJob = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  console.log(req.user);
-  console.log(id);
   const job = await Job.findByIdAndUpdate(id, req.body);
 
   if (!job) return res.json({ msg: "No job found with that id" });

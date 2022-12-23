@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-
-// const ObjectId = mongoose.Schema.ObjectId;
+const User = require("./User");
 
 const JobSchema = mongoose.Schema(
   {
@@ -9,13 +8,9 @@ const JobSchema = mongoose.Schema(
       required: true,
     },
     createdBy: {
-      name: {
-        type: String,
-        required: true,
-      },
-      avatar: {
-        type: String,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: User,
+      required: true,
     },
     jobCategory: {
       type: String,

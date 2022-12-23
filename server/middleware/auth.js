@@ -38,11 +38,13 @@ const isAdmin = asyncHandler(async (req, res, next) => {
 
 // checking if the job is created by same user before doing anything to the job
 const isOwner = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const user = await User.findById(req.user.id);
-  const job = await Job.findById(id);
+  // logged in user
+  const { id } = req.user;
 
-  if (user.name !== job.createdBy.name)
+  // user that created the job
+  const userId = await Job.findById(req.params.id).populate("createdBy",{_id:1}).select(["createdBy", "-_id"])
+
+  if (id !== userId.createdBy._id.toString())
     return res.status(403).json({ msg: "Unable to access this request" });
 
   next();
