@@ -52,6 +52,7 @@ const login = asyncHandler(async (req, res, next) => {
 
 // Change password
 const changePassword = asyncHandler(async (req, res, next) => {
+
   const { oldPassword, newPassword } = req.body;
 
   if (!oldPassword || !newPassword)
@@ -63,7 +64,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
     });
 
   // get the password from database
-  const { id } = req;
+  const { id } = req.user;
   const { password } = await User.findById(id).select("password");
 
   // check old password and password in the database

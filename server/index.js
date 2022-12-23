@@ -21,21 +21,19 @@ app.use(bodyParser.urlencoded({
 app.use('/public', express.static(path.join(__dirname, 'public')))
 
 // Routes
-app.use("/user", user)
-app.use("/auth", auth)
-app.use("/job", job)
-app.use("/admin", admin)
 
-app.get("/", (req, res, next) => {
-    console.log("test run")
-  res.json({ message: "Hello, Welcome to jobhunt" });
-});
+app.use("/api/user", user)
+app.use("/api/auth", auth)
+app.use("/api/job", job)
+app.use("/api/admin", admin)
 
+// when page not found
+app.use("", (req,res,next) => {
+  res.status(404).json({"msg":"Endpoints not found"})
+})
 
 // when an Error is thrown
 app.use((err, req, res, next) => {
-    console.log("Throwing error")
-    console.log({err})
     res.status(500).json({err: err})
 })
 
