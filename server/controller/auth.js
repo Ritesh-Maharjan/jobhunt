@@ -11,7 +11,7 @@ const signup = asyncHandler(async (req, res, next) => {
 
   const password = req.body.password;
 
-  if (!password) return res.json({ msg: "password required" });
+  if (!password) return res.status(400).json({ msg: "password required" });
 
   // hashing the password for our database
   const hash = bcrypt.hashSync(password, saltRounds);
@@ -25,18 +25,18 @@ const signup = asyncHandler(async (req, res, next) => {
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email) return res.json({ msg: "email required" });
-  if (!password) return res.json({ msg: "password required" });
+  if (!email) return res.status(400).json({ msg: "email required" });
+  if (!password) return res.status(400).json({ msg: "password required" });
 
   const hash = await User.findOne({ email })
     .select(["password", "roles"])
     .exec();
 
-  if (!hash) return res.json({ msg: "No user found with that email" });
+  if (!hash) return res.status(400).json({ msg: "No user found with that email" });
   // check password
   const samePassword = bcrypt.compareSync(password, hash.password);
   
-  if (!samePassword) return res.json({ msg: "Invalid credentials" });
+  if (!samePassword) return res.status(401).json({ msg: "Invalid credentials" });
 
   const token = jwt.sign(
     {
@@ -56,10 +56,10 @@ const changePassword = asyncHandler(async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
 
   if (!oldPassword || !newPassword)
-    return res.json({ msg: "Both old and new password are required" });
+    return res.status(400).json({ msg: "Both old and new password are required" });
 
   if (oldPassword === newPassword)
-    return res.json({
+    return res.status(400).json({
       msg: "Old password and new password should be different",
     });
 
@@ -69,7 +69,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
 
   // check old password and password in the database
   const samePassword = bcrypt.compareSync(oldPassword, password);
-  if (!samePassword) return res.json({ msg: "Invalid credentials" });
+  if (!samePassword) return res.status(401).json({ msg: "Invalid credentials" });
 
   // hashing the password for our database
   const hash = bcrypt.hashSync(newPassword, saltRounds);

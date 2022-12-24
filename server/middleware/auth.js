@@ -6,7 +6,7 @@ const Job = require("../model/Job");
 const verifyToken = asyncHandler(async (req, res, next) => {
   // Checking if JWT token was sent or not
   if (!req.headers.authorization)
-    return res.json({ msg: "Please login as JWT is required" });
+    return res.status(400).json({ msg: "Please login as JWT is required" });
   // Splitting to get only token from Bearer tokenNumber
   const token = req.headers.authorization?.split(" ")[1];
   const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
@@ -17,14 +17,14 @@ const verifyToken = asyncHandler(async (req, res, next) => {
 
 const isCompany = asyncHandler(async (req, res, next) => {
   if (req.user?.roles !== "Company")
-    return res.status(403).json({ msg: "Not authorized" });
+    return res.status(401).json({ msg: "Not authorized" });
   next();
 });
 
 // checking if the user is job seeker
 const isJobSeeker = asyncHandler(async (req, res, next) => {
   if (req.user?.roles !== "Job seeker")
-    return res.status(403).json({ msg: "Not authorized" });
+    return res.status(401).json({ msg: "Not authorized" });
   next();
 });
 
@@ -45,7 +45,7 @@ const isOwner = asyncHandler(async (req, res, next) => {
   const userId = await Job.findById(req.params.id).populate("createdBy",{_id:1}).select(["createdBy", "-_id"])
 
   if (id !== userId.createdBy._id.toString())
-    return res.status(403).json({ msg: "Unable to access this request" });
+    return res.status(401).json({ msg: "Unable to access this request" });
 
   next();
 });

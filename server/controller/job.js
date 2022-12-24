@@ -18,7 +18,7 @@ const getJob = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   const job = await Job.findById(id).populate("createdBy", {name:1, avatar:1});
-  if (!job) return res.json({ msg: "No job found with that id" });
+  if (!job) return res.status(400).json({ msg: "No job found with that id" });
   res.json(job);
 });
 
@@ -39,7 +39,7 @@ const createJob = asyncHandler(async (req, res, next) => {
     !deadline ||
     !education
   )
-    return res.json({ msg: "All required fields are missing" });
+    return res.status(400).json({ msg: "All required fields are missing" });
 
   const job = await Job.create({ ...req.body, createdBy: userId });
 
@@ -54,7 +54,7 @@ const updateJob = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const job = await Job.findByIdAndUpdate(id, req.body);
 
-  if (!job) return res.json({ msg: "No job found with that id" });
+  if (!job) return res.status(400).json({ msg: "No job found with that id" });
   res.json({ msg: "Updated successfully" });
 });
 
@@ -66,7 +66,7 @@ const deleteJob = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const job = await Job.findByIdAndDelete(id);
 
-  if (!job) return res.json({ msg: "No job found with that id" });
+  if (!job) return res.status(400).json({ msg: "No job found with that id" });
   res.json({ msg: "Deleted successfully" });
 });
 

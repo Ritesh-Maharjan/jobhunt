@@ -17,7 +17,7 @@ const getUser = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
 
   const user = await User.findById(id);
-  if (!user) return res.json({ msg: "No job found with that id" });
+  if (!user) return res.status(400).json({ msg: "No job found with that id" });
   res.json(user);
 });
 
@@ -29,18 +29,18 @@ const updateUser = asyncHandler(async (req, res, next) => {
   const { name, password, roles } = req.body;
 
   if (name || password || roles)
-    return res.json({ msg: "Unable to update these fields" });
+    return res.status(400).json({ msg: "Unable to update these fields" });
 
   if (req.file) {
     const user = await User.findByIdAndUpdate(id, {...req.body, avatar: req.file.path });
     if (!user.avatar) {
       fs.unlinkSync(user.avatar);
     }
-    if (!user) return res.json({ msg: "No job found with that id" });
+    if (!user) return res.status(400).json({ msg: "No job found with that id" });
     res.json({ msg: "Updated successfully" });
   } else {
     const user = await User.findByIdAndUpdate(id, req.body);
-    if (!user) return res.json({ msg: "No job found with that id" });
+    if (!user) return res.status(400).json({ msg: "No job found with that id" });
     res.json({ msg: "Updated successfully" });
   }
 });
@@ -60,7 +60,7 @@ const deleteUser = asyncHandler(async (req, res, next) => {
 
   const user = await User.findByIdAndDelete(id);
 
-  if (!user) return res.json({ msg: "No user found with that id" });
+  if (!user) return res.status(400).json({ msg: "No user found with that id" });
   res.json({ msg: "Deleted successfully" });
 });
 
