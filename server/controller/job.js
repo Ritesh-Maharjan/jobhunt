@@ -1,13 +1,44 @@
 const asyncHandler = require("express-async-handler");
 const Application = require("../model/Application");
+const jwt = require("jsonwebtoken");
 const Job = require("../model/Job");
 
 /**
  * getAlljob:  RESTful GET request returning all job objects
+ * @query: expects page and perpage i.e. number and search i.e. text
  */
 const getAllJobs = asyncHandler(async (req, res, next) => {
-  const job = await Job.find({}).populate("createdBy", {name:1, avatar:1});
-  res.json(job);
+  let page = req.query.page || 1;
+  let perPage = req.query.perpage || 5;
+  let search = req.query.search;
+  let jobs;
+
+  if (req.headers.authorization) {
+    const token = req.headers.authorization?.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+    if (decoded.roles === "Company") {
+      // returning jobs that is created by the user and job with title that matches search with pagination
+      jobs = await Job.find(
+        { $and: [{jobTitle: new RegExp(search, "i")}, {createdBy: { _id: decoded.id } }]},
+      )
+        .populate("createdBy", { name: 1, avatar: 1 })
+        .limit(perPage)
+        .skip((page - 1) * perPage);
+    }
+  } else {
+    // jobs that matches the search term if given with pagination
+    jobs = await Job.find({ jobTitle: new RegExp(search, "i") })
+      .populate("createdBy", { name: 1, avatar: 1 })
+      .limit(perPage)
+      .skip((page - 1) * perPage);
+  }
+
+  // giving the total number of documents found with or without the search term
+  const count = await Job.find({
+    jobTitle: new RegExp(search, "i"),
+  }).countDocuments();
+
+  res.json({ total: count, jobs: jobs });
 });
 
 /**
@@ -17,7 +48,10 @@ const getAllJobs = asyncHandler(async (req, res, next) => {
 const getJob = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const job = await Job.findById(id).populate("createdBy", {name:1, avatar:1});
+  const job = await Job.findById(id).populate("createdBy", {
+    name: 1,
+    avatar: 1,
+  });
   if (!job) return res.status(400).json({ msg: "No job found with that id" });
   res.json(job);
 });
@@ -98,13 +132,13 @@ const applications = asyncHandler(async (req, res, next) => {
  */
 const jobApplied = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  
+
   const allApplicaton = await Application.find({
     userId: req.user.id,
     jobId: id,
   });
 
-  console.log(allApplicaton)
+  console.log(allApplicaton);
   if (allApplicaton.length === 0) return res.send(false);
 
   return res.send(true);
@@ -120,7 +154,7 @@ const updateFeature = asyncHandler(async (req, res, next) => {
   const previousFeatured = await Job.findById(id).select("featured");
 
   const isFeatured = await Job.findByIdAndUpdate(id, {
-    featured: !previousFeatured.featured
+    featured: !previousFeatured.featured,
   });
 
   if (isFeatured) return res.json({ msg: "Featured has been changed" });
