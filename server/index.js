@@ -34,7 +34,7 @@ app.use("", (req,res,next) => {
 
 // when an Error is thrown
 app.use((err, req, res, next) => {
-    res.status(500).json({err: err})
+    res.status(500).json({err})
 })
 
 
