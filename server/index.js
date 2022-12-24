@@ -4,6 +4,7 @@ require("dotenv").config();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require("path")
+const cors = require("cors")
 const connect = require("./config/dbConn")
 const user = require('./route/user')
 const auth = require('./route/auth')
@@ -17,11 +18,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-
+app.use(cors())
 app.use('/public', express.static(path.join(__dirname, 'public')))
 
 // Routes
-
 app.use("/api/user", user)
 app.use("/api/auth", auth)
 app.use("/api/job", job)
