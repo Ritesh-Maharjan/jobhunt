@@ -33,6 +33,16 @@ const getAllJobs = asyncHandler(async (req, res, next) => {
       count = await Job.find({
         jobTitle: new RegExp(search, "i"),
       }).countDocuments();
+    } else {
+      // jobs that matches the search term if given with pagination
+      jobs = await Job.find({ jobTitle: new RegExp(search, "i") })
+        .populate("createdBy", { name: 1, avatar: 1 })
+        .limit(perPage)
+        .skip((page - 1) * perPage);
+      // giving the total number of documents found with or without the search term
+      count = await Job.find({
+        jobTitle: new RegExp(search, "i"),
+      }).countDocuments();
     }
   } else {
     // jobs that matches the search term if given with pagination
