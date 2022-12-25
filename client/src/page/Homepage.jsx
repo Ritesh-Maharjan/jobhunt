@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useJwt } from "react-jwt";
 import { getAllJobs } from "../api/jobApi";
 
 function Homepage() {
@@ -9,16 +11,20 @@ function Homepage() {
 
   const [search, setSearch] = useState("");
 
+  const token = useSelector((state) => state.auth.user);
+  const { decodedToken } = useJwt(token);
+  console.log(decodedToken);
+
   useEffect(() => {
+    console.log(search);
+    console.log(token);
     const fetchData = async () => {
-        console.log(search)
-      const data = await getAllJobs(search);
+      const data = await getAllJobs(search, token);
       //   paginate total jobs count = data.data.total
-      console.log(data.data.jobs)
       setJobs(data.data.jobs);
     };
     fetchData();
-  }, [search]);
+  }, [search, token]);
 
   const submitSearch = (e) => {
     e.preventDefault();
@@ -56,57 +62,77 @@ function Homepage() {
             </svg>
           </button>
         </form>
-        <div className="grid xl:grid-cols-2 w-full">
-          {jobs?.map((el) => {
-            return (
-              <Link to={`job/${el._id}`} key={el._id}>
-                <div className=" flex items-center space-between border-2 m-2 p-2 rounded-2xl drop-shadow-lg hover:border-red-400">
-                  <div className="flex flex-col justify-center items-center px-2 mr-6">
-                    {el?.createdBy.avatar ? (
-                      <img src={el?.createdBy.avatar} alt="Company logo" className="" />
-                    ) : (
-                      <img
-                        src="https://imgs.search.brave.com/lQJ580-JievQJ14gi6KKJrwsK5Yln9K2ECOia6lOlBg/rs:fit:474:225:1/g:ce/aHR0cHM6Ly90c2U0/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC5E/WkxXRnFZcUlHNGxf/eUphcU91SlhnSGFI/YSZwaWQ9QXBp"
-                        alt="Company logo"
-                      />
-                    )}
-                    <h1 className=" lg:text-3xl">{el?.createdBy?.name}</h1>
-                  </div>
-                  <div className="text-xs lg:text-lg ml-4 w-full">
-                    <h2 className="flex items-center">
-                      <span className="mr-3 w-32">Job Title: </span>
-                      {el?.jobTitle}
-                    </h2>
-                    <h2 className="flex items-center">
-                      <span className="mr-3 w-32">Vacancies:</span>{" "}
-                      {el?.vacancies}
-                    </h2>
-                    <h2 className="flex items-center">
-                      <span className="mr-3 w-32">Job Category:</span>
-                      {el?.jobCategory}
-                    </h2>
-                    <h2 className="flex items-center">
-                      <span className="mr-3 w-32">Salary:</span> {el?.salary}
-                    </h2>
-                    <h2 className="flex items-center">
-                      <span className="mr-3 w-32">Deadline:</span>
-                      {el?.deadline}
-                    </h2>
+        {decodedToken?.roles === "Company" && (
+          <div className="flex justify-end w-full my-2">
+            <Link
+              to="addjob"
+              className="border-2 p-2 rounded-2xl drop-shadow-lg hover:text-white hover:bg-black"
+            >
+              Add job
+            </Link>
+          </div>
+        )}
+        {jobs.length < 1 ? (
+          <div>
+            <h1 className="text-3xl font-black">No Jobs found</h1>
+          </div>
+        ) : (
+          <div className="grid xl:grid-cols-2 w-full">
+            {jobs?.map((el) => {
+              return (
+                <Link to={`job/${el._id}`} key={el._id}>
+                  <div className=" flex items-center space-between border-2 m-2 p-2 rounded-2xl drop-shadow-lg hover:border-red-400">
+                    <div className="flex flex-col justify-center items-center px-2 mr-6">
+                      {el?.createdBy.avatar ? (
+                        <img
+                          src={el?.createdBy.avatar}
+                          alt="Company logo"
+                          className=""
+                        />
+                      ) : (
+                        <img
+                          src="https://imgs.search.brave.com/lQJ580-JievQJ14gi6KKJrwsK5Yln9K2ECOia6lOlBg/rs:fit:474:225:1/g:ce/aHR0cHM6Ly90c2U0/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC5E/WkxXRnFZcUlHNGxf/eUphcU91SlhnSGFI/YSZwaWQ9QXBp"
+                          alt="Company logo"
+                        />
+                      )}
+                      <h1 className="text-xs lg:text-3xl">{el?.createdBy?.name}</h1>
+                    </div>
+                    <div className="text-xs lg:text-lg ml-4 w-full">
+                      <h2 className="flex items-center">
+                        <span className="mr-3 w-32">Job Title: </span>
+                        {el?.jobTitle}
+                      </h2>
+                      <h2 className="flex items-center">
+                        <span className="mr-3 w-32">Vacancies:</span>{" "}
+                        {el?.vacancies}
+                      </h2>
+                      <h2 className="flex items-center">
+                        <span className="mr-3 w-32">Job Category:</span>
+                        {el?.jobCategory}
+                      </h2>
+                      <h2 className="flex items-center">
+                        <span className="mr-3 w-32">Salary:</span> {el?.salary}
+                      </h2>
+                      <h2 className="flex items-center">
+                        <span className="mr-3 w-32">Deadline:</span>
+                        {el?.deadline}
+                      </h2>
 
-                    <h2 className="flex items-center">
-                      <span className="mr-3 w-32">Experience:</span>
-                      {el?.experience}
-                    </h2>
-                    <h2 className="flex items-center">
-                      <span className="mr-3 w-32">Education:</span>
-                      {el?.education}
-                    </h2>
+                      <h2 className="flex items-center">
+                        <span className="mr-3 w-32">Experience:</span>
+                        {el?.experience}
+                      </h2>
+                      <h2 className="flex items-center">
+                        <span className="mr-3 w-32">Education:</span>
+                        {el?.education}
+                      </h2>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

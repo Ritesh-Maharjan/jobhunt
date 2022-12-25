@@ -3,13 +3,15 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useJwt } from "react-jwt";
-import { adminDeleteJob, getJob } from "../api/jobApi";
+import { adminDeleteJob, applyJob, deleteJob, getJob, isApplied } from "../api/jobApi";
 
 function Detail() {
   const params = useParams();
   const [job, setJob] = useState();
   const [roles, setRole] = useState();
-  const [popup, setPopup] = useState(true);
+  const [popup, setPopup] = useState(false);
+  const [errorMsg, setErrorMsg] = useState();
+  const [apply, setApply] = useState(false)
   const navigate = useNavigate();
 
   const token = useSelector((state) => state.auth.user);
@@ -19,18 +21,23 @@ function Detail() {
     const fetchData = async (id) => {
       const data = await getJob(id);
       setJob(data.data);
-      console.log(data.data);
     };
+
+    const checkIfApplied = async (id,token) => {
+      const success = await isApplied(id, token)
+      setApply(success)
+    }
 
     if (decodedToken) {
       setRole(decodedToken.roles);
+      checkIfApplied(params.id, token)
     }
 
     fetchData(params.id);
-  }, [params.id, decodedToken]);
+  }, [params.id, decodedToken, token]);
 
-  const deleteJobBtn = async () => {
-    const success = await adminDeleteJob(params.id);
+  const adminDeleteJobBtn = async () => {
+    const success = await adminDeleteJob(params.id, token);
 
     if (success.data) {
       navigate("/");
@@ -38,8 +45,32 @@ function Detail() {
     console.log(success);
   };
 
+  const deleteJobBtn = async () => {
+    const success = await deleteJob(params.id, token);
+
+    if (success.data) {
+      navigate("/");
+    } else {
+      setErrorMsg(success.response.data.msg);
+      setPopup(false);
+      setTimeout(() => {
+        navigate("/")
+      }, 5000)
+    }
+  };
+
+  const applyJobBtn = async () => {
+      if(token){
+      await applyJob(params.id, token)
+      alert("Applied to job successfully")
+    }else{
+      alert("Please login to apply");
+    }
+  }
+
   return (
     <div className="m-4">
+      {errorMsg && <p className="text-red-400 font-black text-3xl flex justify-center my-2">Not Authorized, only can delete your own job</p>}
       <div className="flex w-[90vw] m-auto">
         <div
           className={`${
@@ -70,7 +101,10 @@ function Detail() {
               Are you sure you want to delete this image?
             </h3>
             <div className="flex justify-center gap-4">
-              <button className="bg-red-700 p-2" onClick={deleteJobBtn}>
+              <button
+                className="bg-red-700 p-2"
+                onClick={roles === "Admin" ? adminDeleteJobBtn : deleteJobBtn}
+              >
                 Yes, I'm sure
               </button>
               <button className="border-2 p-2" onClick={() => setPopup(false)}>
@@ -125,8 +159,18 @@ function Detail() {
                     Delete Job
                   </button>
                 </>
+              ) : roles === "Company" ? (
+                <>
+                  <button
+                    className="border-2 px-3 py-1 my-2 bg-red-500 hover:text-white hover:bg-black"
+                    onClick={() => setPopup(true)}
+                  >
+                    Delete Job
+                  </button>
+                </>
               ) : (
-                <button className="border-2 px-3 py-1 my-2 hover:text-white hover:bg-black">
+                apply ? <button className="border-2 px-3 py-1 my-2 bg-red-600" disabled>Already applied</button> :
+                <button className="border-2 px-3 py-1 my-2 hover:text-white hover:bg-black" onClick={applyJobBtn}>
                   Apply
                 </button>
               )}

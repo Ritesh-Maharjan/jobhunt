@@ -1,20 +1,23 @@
 import axios from "axios";
-
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
-const token = localStorage.getItem("user");
 
-// Calling POST method of /auth/signup to create user
-const getAllJobs = async (data) => {
+const getAllJobs = async (search, token) => {
+  let allJobs;
   try {
-    const allJobs = await axios.get(`${SERVER_URL}/job?search=${data}`);
+    if (token) {
+      allJobs = await axios.get(`${SERVER_URL}/job?search=${search}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } else {
+      allJobs = await axios.get(`${SERVER_URL}/job?search=${search}`);
+    }
     return allJobs;
   } catch (err) {
     return err;
   }
 };
 
-// Calling POST method of /auth/signup to create user
-const getJob = async (data) => {
+const getJob = async (data, token) => {
   try {
     const allJobs = await axios.get(`${SERVER_URL}/job/${data}`);
     return allJobs;
@@ -23,13 +26,49 @@ const getJob = async (data) => {
   }
 };
 
-const adminDeleteJob = async (data) => {
-    console.log(`Bearer ${token}`)
+const adminDeleteJob = async (data, token) => {
   try {
     const allJobs = await axios.delete(`${SERVER_URL}/admin/jobs/${data}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return allJobs;
-  } catch (e) {}
+  } catch (e) {
+    console.log(e)
+  }
 };
-export { getAllJobs, getJob, adminDeleteJob };
+
+const deleteJob = async (data,token) => {
+  try {
+    const allJobs = await axios.delete(`${SERVER_URL}/job/${data}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return allJobs;
+  } catch (e) {
+    return e
+  }
+}
+
+const applyJob = async (data,token) => {
+  try {
+    const apply = await axios.post(`${SERVER_URL}/job/${data}/apply`, {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return apply;
+  } catch (e) {
+    return e
+  }
+}
+
+const isApplied = async (data,token) => {
+  try{
+    const apply = await axios.get(`${SERVER_URL}/job/${data}/applied`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return apply;
+  }
+  catch(e){
+    return e
+  }
+}
+
+export { getAllJobs, getJob, adminDeleteJob, deleteJob, applyJob, isApplied };

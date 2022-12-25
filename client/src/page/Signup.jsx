@@ -63,7 +63,7 @@ function Signup() {
 
   return (
     <div>
-      <div className="flex justify-center h-[90vh]">
+      <div className="mt-10 h-[90vh]">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
