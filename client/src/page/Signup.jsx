@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
-import { createUser } from "../api/UserApi";
+import { createUser } from "../api/userApi";
 
 function Signup() {
   const [file, setFile] = useState("");

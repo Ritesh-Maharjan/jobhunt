@@ -2,12 +2,16 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
-import { login } from "../api/UserApi";
+import { login } from "../api/userApi";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { loggingIn } from "../redux/slicer/authSlice";
 
 function Login() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
+
+  const dispatch = useDispatch()
 
   const initialValues = {
     email: "",
@@ -27,10 +31,11 @@ function Login() {
   const onSubmit = async (values, actions) => {
     const resData = await login(values);
 
-    console.log(resData);
-    if (resData.response.status !== 200) {
+    if (resData.response) {
       setError(resData.response.data.msg);
     } else {
+      localStorage.setItem('user', resData.data.token)
+      dispatch(loggingIn(resData.data.token))
       navigate("/");
     }
   };
