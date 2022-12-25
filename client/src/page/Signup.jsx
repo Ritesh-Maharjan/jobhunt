@@ -2,16 +2,20 @@ import React from "react";
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router";
 import { createUser } from "../api/UserApi";
 
 function Signup() {
+  const [file, setFile] = useState("");
+  const navigate = useNavigate();
 
-  const [file,setFile] = useState("");
-
+  // validation for all input except image since it's not required
   const validationSchema = Yup.object({
     name: Yup.string().required(),
     email: Yup.string().email().required(),
-    password: Yup.string().required(),
+    password: Yup.string()
+      .min(7, "Must be greater than 7 characters")
+      .required(),
     phone: Yup.string()
       .required()
       .matches(/^[0-9]+$/, "Must be only digits")
@@ -28,22 +32,34 @@ function Signup() {
     roles: "Company",
   };
 
-  const onSubmit = async (values) => {
+  const renderError = (message) => <p className="text-red-400">{message}</p>;
 
-    let formData = new FormData()
-    formData.append("name", values.name)
-    formData.append("email", values.email)
-    formData.append("password", values.password)
-    formData.append("phone", values.phone)
-    formData.append("roles", values.roles)
-    formData.append("avatar", file)
+  const onSubmit = async (values, actions) => {
+    // Creating formdata in order to send image if sent
+    let formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+    formData.append("phone", values.phone);
+    formData.append("roles", values.roles);
+    formData.append("avatar", file);
 
-    const data = await createUser(formData)
-    console.log(data)
+    // calling the api to create the user
+    const resData = await createUser(formData);
+
+    // checking errors and displaying the errors
+    if (resData.response) {
+      let errors = resData.response.data.err.errors;
+      if (errors.email) {
+        actions.setFieldError("email", errors.email.message);
+      }
+      if (errors.phone) {
+        actions.setFieldError("phone", errors.phone.message);
+      }
+    } else {
+      navigate("/");
+    }
   };
-
-  const renderError = (message) => <p className="help is-danger">{message}</p>;
-
 
   return (
     <div>
@@ -51,10 +67,8 @@ function Signup() {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={async (values, { resetForm }) => {
-            await onSubmit(values);
-
-            // resetForm();
+          onSubmit={async (values, actions) => {
+            await onSubmit(values, actions);
           }}
         >
           <Form className="w-[90vw] border-2 border-black rounded-lg shadow-2xl p-6 mt-2 m-auto">
@@ -145,10 +159,11 @@ function Signup() {
             <div className="my-4">
               <input
                 className="file:mr-2 file:py-1 file:px-4 text-sm file:rounded-full file:text-sm cursor-pointer"
-                type="file"              
+                type="file"
                 name="avatar"
                 onChange={(event) => {
-                  setFile(event.target.files[0])}}
+                  setFile(event.target.files[0]);
+                }}
               />
             </div>
 
