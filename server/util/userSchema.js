@@ -5,7 +5,7 @@ const userSchema = yup.object({
     name: yup.string("Name is required").required(),
     password: yup
       .string("Must have at least 8 length and max of 32")
-      .min(8)
+      .min(7)
       .max(32)
       .required(),
     email: yup.string("Must be an email").email().required(),
@@ -26,8 +26,8 @@ const loginSchema = yup.object({
   body: yup.object({
     email: yup.string("Must be an email").email().required(),
     password: yup
-      .string("Must have at least 8 length and max of 32")
-      .min(8)
+      .string("Must have at least 7 length and max of 32")
+      .min(7)
       .max(32)
       .required(),
   }),
@@ -37,12 +37,12 @@ const changePasswordSchema = yup.object({
   body: yup.object({
     oldPassword: yup
       .string("Must have at least 8 length and max of 32")
-      .min(8)
+      .min(7)
       .max(32)
       .required(),
     newPassword: yup
       .string("Must have at least 8 length and max of 32")
-      .min(8)
+      .min(7)
       .max(32)
       .required(),
   }),
