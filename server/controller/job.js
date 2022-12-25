@@ -12,18 +12,27 @@ const getAllJobs = asyncHandler(async (req, res, next) => {
   let perPage = req.query.perpage || 5;
   let search = req.query.search;
   let jobs;
+  let count;
 
   if (req.headers.authorization) {
     const token = req.headers.authorization?.split(" ")[1];
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
     if (decoded.roles === "Company") {
       // returning jobs that is created by the user and job with title that matches search with pagination
-      jobs = await Job.find(
-        { $and: [{jobTitle: new RegExp(search, "i")}, {createdBy: { _id: decoded.id } }]},
-      )
+      jobs = await Job.find({
+        $and: [
+          { jobTitle: new RegExp(search, "i") },
+          { createdBy: { _id: decoded.id } },
+        ],
+      })
         .populate("createdBy", { name: 1, avatar: 1 })
         .limit(perPage)
         .skip((page - 1) * perPage);
+
+      // giving the total number of documents found with or without the search term
+      count = await Job.find({
+        jobTitle: new RegExp(search, "i"),
+      }).countDocuments();
     }
   } else {
     // jobs that matches the search term if given with pagination
@@ -31,12 +40,11 @@ const getAllJobs = asyncHandler(async (req, res, next) => {
       .populate("createdBy", { name: 1, avatar: 1 })
       .limit(perPage)
       .skip((page - 1) * perPage);
+    // giving the total number of documents found with or without the search term
+    count = await Job.find({
+      jobTitle: new RegExp(search, "i"),
+    }).countDocuments();
   }
-
-  // giving the total number of documents found with or without the search term
-  const count = await Job.find({
-    jobTitle: new RegExp(search, "i"),
-  }).countDocuments();
 
   res.json({ total: count, jobs: jobs });
 });
