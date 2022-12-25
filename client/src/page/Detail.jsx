@@ -1,9 +1,141 @@
-import React from 'react'
+import React, { useState } from "react";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { useJwt } from "react-jwt";
+import { adminDeleteJob, getJob } from "../api/jobApi";
 
 function Detail() {
+  const params = useParams();
+  const [job, setJob] = useState();
+  const [roles, setRole] = useState();
+  const [popup, setPopup] = useState(true);
+  const navigate = useNavigate();
+
+  const token = useSelector((state) => state.auth.user);
+
+  const { decodedToken } = useJwt(token);
+  useEffect(() => {
+    const fetchData = async (id) => {
+      const data = await getJob(id);
+      setJob(data.data);
+      console.log(data.data);
+    };
+
+    if (decodedToken) {
+      setRole(decodedToken.roles);
+    }
+
+    fetchData(params.id);
+  }, [params.id, decodedToken]);
+
+  const deleteJobBtn = async () => {
+    const success = await adminDeleteJob(params.id);
+
+    if (success.data) {
+      navigate("/");
+    }
+    console.log(success);
+  };
+
   return (
-    <div>Detail</div>
-  )
+    <div className="m-4">
+      <div className="flex w-[90vw] m-auto">
+        <div
+          className={`${
+            popup ? "fixed" : "hidden"
+          } flex items-center justify-center h-full w-screen left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%] z-10 bg-gray-900 bg-opacity-50 `}
+        >
+          <div className="text-center flex flex-col justify-center items-center min-h-[250px] rounded-xl z-30 bg-white p-10 relative">
+            <div
+              className="text-red-600 absolute top-0 right-0"
+              onClick={() => setPopup(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-9 h-9"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+            <h3 className="my-4 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this image?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <button className="bg-red-700 p-2" onClick={deleteJobBtn}>
+                Yes, I'm sure
+              </button>
+              <button className="border-2 p-2" onClick={() => setPopup(false)}>
+                No, cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        {job && (
+          <div className=" flex items-center space-between w-full border-2 m-2 p-2 rounded-2xl drop-shadow-lg">
+            <div className="flex flex-col w-[10vw] justify-center items-center px-2 mr-6">
+              {job?.createdBy.avatar ? (
+                <img src={job?.createdBy.avatar} alt="Company Logo" />
+              ) : (
+                <img
+                  src="https://imgs.search.brave.com/lQJ580-JievQJ14gi6KKJrwsK5Yln9K2ECOia6lOlBg/rs:fit:474:225:1/g:ce/aHR0cHM6Ly90c2U0/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC5E/WkxXRnFZcUlHNGxf/eUphcU91SlhnSGFI/YSZwaWQ9QXBp"
+                  alt="Company Logo"
+                />
+              )}
+              <h1 className="text-3xl">{job?.createdBy?.name}</h1>
+            </div>
+            <div className="ml-4 w-full">
+              <h2 className="flex items-center">
+                <span className="mr-3 w-32">Job Title: </span>
+                {job?.jobTitle}
+              </h2>
+              <h2 className="flex items-center">
+                <span className="mr-3 w-32">Vacancies:</span> {job?.vacancies}
+              </h2>
+              <h2 className="flex items-center">
+                <span className="mr-3 w-32">Job Category:</span>
+                {job?.jobCategory}
+              </h2>
+              <h2 className="flex items-center">
+                <span className="mr-3 w-32">Salary:</span> {job?.salary}
+              </h2>
+              <h2 className="flex items-center">
+                <span className="mr-3 w-32">Deadline:</span> {job?.deadline}
+              </h2>
+              <h2 className="flex items-center">
+                <span className="mr-3 w-32">Experience:</span> {job?.experience}
+              </h2>
+              <h2 className="flex items-center">
+                <span className="mr-3 w-32">Education:</span> {job?.education}
+              </h2>
+              {roles === "Admin" ? (
+                <>
+                  <button
+                    className="border-2 px-3 py-1 my-2 bg-red-500 hover:text-white hover:bg-black"
+                    onClick={() => setPopup(true)}
+                  >
+                    Delete Job
+                  </button>
+                </>
+              ) : (
+                <button className="border-2 px-3 py-1 my-2 hover:text-white hover:bg-black">
+                  Apply
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default Detail
+export default Detail;
