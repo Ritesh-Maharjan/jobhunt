@@ -13,11 +13,8 @@ function Homepage() {
 
   const token = useSelector((state) => state.auth.user);
   const { decodedToken } = useJwt(token);
-  console.log(decodedToken);
 
   useEffect(() => {
-    console.log(search);
-    console.log(token);
     const fetchData = async () => {
       const data = await getAllJobs(search, token);
       //   paginate total jobs count = data.data.total
@@ -32,8 +29,8 @@ function Homepage() {
   };
 
   return (
-    <div className="flex">
-      <div className="flex flex-col w-[90vw] m-auto items-center">
+    <div>
+      <div className="flex flex-col w-[90vw] m-auto items-center ">
         <form className="flex items-center w-full relative m-2">
           <input
             type="text"
@@ -95,7 +92,9 @@ function Homepage() {
                           alt="Company logo"
                         />
                       )}
-                      <h1 className="text-xs lg:text-3xl">{el?.createdBy?.name}</h1>
+                      <h1 className="text-xs lg:text-3xl">
+                        {el?.createdBy?.name}
+                      </h1>
                     </div>
                     <div className="text-xs lg:text-lg ml-4 w-full">
                       <h2 className="flex items-center">
