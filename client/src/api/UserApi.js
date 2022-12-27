@@ -32,6 +32,20 @@ const getAllUser = async (data) => {
   } catch (err) {
     return err;
   }
+
 };
 
-export { createUser, login, getAllUser };
+const deleteUser = async (token, id) => {
+  try {
+    const users = await axios.delete(`${SERVER_URL}/admin/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return users;
+  } catch (err) {
+    return err;
+  }
+};
+
+export { createUser, login, getAllUser, deleteUser };
