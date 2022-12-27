@@ -19,6 +19,19 @@ const login = async (data) => {
   } catch (err) {
     return err;
   }
-}
+};
 
-export { createUser, login };
+const getAllUser = async (data) => {
+  try {
+    const jobs = await axios.get(`${SERVER_URL}/admin/users`, {
+      headers: {
+        Authorization: `Bearer ${data}`
+      }
+    });
+    return jobs;
+  } catch (err) {
+    return err;
+  }
+};
+
+export { createUser, login, getAllUser };
