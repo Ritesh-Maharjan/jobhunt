@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useJwt } from "react-jwt";
 import { loggingIn, loggingOut } from "../redux/slicer/authSlice";
 import { useState } from "react";
@@ -9,34 +9,39 @@ import { useRef } from "react";
 
 function Header() {
   const [displayMenu, setDisplayMenu] = useState(true);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const menuButton = useRef();
   const menuEl = useRef();
   const isLoggedIn = useSelector((state) => state.auth.user);
   const { decodedToken } = useJwt(isLoggedIn);
   const roles = decodedToken?.roles;
 
-  const handleClick = (e) => {
-    console.log(e.target);
-    console.log(menuEl.current);
-
-    if (!menuEl.current.contains(e.target)) {
-      setDisplayMenu(false);
-    }
-  };
-
   useEffect(() => {
+    const handleClick = (e) => {
+      if (
+        displayMenu &&
+        !menuButton.current.contains(e.target) &&
+        !menuEl.current.contains(e.target)
+      ) {
+        setDisplayMenu(false);
+      }
+    };
     document.addEventListener("mousedown", handleClick);
     if (localStorage.getItem("user")) {
       dispatch(loggingIn(localStorage.getItem("user")));
     }
 
     return () => {
-      console.log("removed");
+      document.removeEventListener("mousedown", handleClick);
     };
-  }, [dispatch]);
+  }, [dispatch, displayMenu]);
+
   const logout = () => {
     dispatch(loggingOut());
     localStorage.removeItem("user");
+    setDisplayMenu(false)
+    navigate("/login")
   };
 
   return (
@@ -49,45 +54,51 @@ function Header() {
           {isLoggedIn ? (
             <div className="relative">
               <button
-                ref={menuEl}
+                ref={menuButton}
                 className="py-1 px-2 border-2 rounded-md"
                 onClick={() => setDisplayMenu(!displayMenu)}
               >
                 <span className="mr-4">Account </span>
               </button>
-              {displayMenu && (
-                <div className="absolute right-0 bg-white rounded-md shadow-xl w-44 ">
+              <div
+                className={`${
+                  displayMenu ? "absolute" : "hidden"
+                } right-0 bg-white rounded-md shadow-xl w-44`}
+                ref={menuEl}
+              >
+                <Link
+                  to="/profile"
+                  onClick={() => setDisplayMenu(false)}
+                  className="block px-4 py-2 text-sm  text-gray-700 hover:bg-gray-400 hover:text-white"
+                >
+                  Profile
+                </Link>
+                {roles === "Job seeker" ? (
                   <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-sm  text-gray-700 hover:bg-gray-400 hover:text-white"
+                    to="/appliedjobs"
+                  onClick={() => setDisplayMenu(false)}
+                  className="block px-4 py-2 text-sm  text-gray-700 hover:bg-gray-400 hover:text-white"
                   >
-                    Profile
+                    Applied Jobs
                   </Link>
-                  {roles === "Job seeker" ? (
-                    <Link
-                      to="/appliedjobs"
-                      className="block px-4 py-2 text-sm  text-gray-700 hover:bg-gray-400 hover:text-white"
-                    >
-                      Applied Jobs
-                    </Link>
-                  ) : roles === "Admin" ? (
-                    <Link
-                      to="/users"
-                      className="block px-4 py-2 text-sm  text-gray-700 hover:bg-gray-400 hover:text-white"
-                    >
-                      Users
-                    </Link>
-                  ) : (
-                    <></>
-                  )}
-                  <button
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white w-full text-left"
-                    onClick={logout}
+                ) : roles === "Admin" ? (
+                  <Link
+                    to="/users"
+                  onClick={() => setDisplayMenu(false)}
+                  className="block px-4 py-2 text-sm  text-gray-700 hover:bg-gray-400 hover:text-white"
                   >
-                    Logout
-                  </button>
-                </div>
-              )}
+                    Users
+                  </Link>
+                ) : (
+                  <></>
+                )}
+                <button
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white w-full text-left"
+                  onClick={logout}
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           ) : (
             <ul className="flex justify-around w-[10rem]">
