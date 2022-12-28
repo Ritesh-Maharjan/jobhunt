@@ -8,6 +8,7 @@ const {
   applyJob,
   applications,
   jobApplied,
+  deleteAppliedJobs,
 } = require("../controller/job");
 const { verifyToken, isCompany, isOwner, isJobSeeker } = require("../middleware/auth");
 const { validate } = require("../middleware/validation");
@@ -22,6 +23,7 @@ router
   .get("/:id/applied", verifyToken, jobApplied)
   .post("/", verifyToken, isCompany, validate(createJobSchema), createJob)
   .put("/:id", verifyToken, isCompany, isOwner, validate(updateJobSchema), updateJob)
+  .delete("/deleteapplication", verifyToken, deleteAppliedJobs)
   .delete("/:id", verifyToken, isCompany, isOwner, deleteJob)
   .post("/:id/apply", verifyToken, isJobSeeker, applyJob)
 

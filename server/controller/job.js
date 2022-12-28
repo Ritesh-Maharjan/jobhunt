@@ -156,8 +156,21 @@ const jobApplied = asyncHandler(async (req, res, next) => {
     jobId: id,
   });
 
-  console.log(allApplicaton);
   if (allApplicaton.length === 0) return res.send(false);
+
+  return res.send(true);
+});
+
+/**
+ * jobApplied:  RESTful GET request returning a particular job object
+ * @param id: string
+ */
+const deleteAppliedJobs = asyncHandler(async (req, res, next) => {
+  const { id } = req.user;
+
+  await Application.deleteMany({
+    userId: id
+  });
 
   return res.send(true);
 });
@@ -171,4 +184,5 @@ module.exports = {
   applyJob,
   applications,
   jobApplied,
+  deleteAppliedJobs
 };
