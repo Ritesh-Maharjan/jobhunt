@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useRef } from "react";
 
 function Header() {
-  const [displayMenu, setDisplayMenu] = useState(true);
+  const [displayMenu, setDisplayMenu] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const menuButton = useRef();
