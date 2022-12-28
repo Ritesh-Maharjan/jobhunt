@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteUser, getAllUser } from "../api/userApi";
+import { adminDeleteUser, getAllUser } from "../api/userApi";
 import Popup from "../component/Popup";
 import { togglePopup } from "../redux/slicer/popupSlice";
 
@@ -23,7 +23,7 @@ function Users() {
   }, [token,popup]);
 
   const removeUser = async () => {
-    const resData = await deleteUser(token, deleteId)
+    const resData = await adminDeleteUser(token, deleteId)
     if(resData.data){
       dispatch(togglePopup(false))
     }

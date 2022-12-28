@@ -4,6 +4,7 @@ import Detail from "./page/Detail";
 import Homepage from "./page/Homepage";
 import Login from "./page/Login";
 import NotFound from "./page/NotFound";
+import Profile from "./page/Profile";
 import Signup from "./page/Signup";
 import Users from "./page/Users";
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/job/:id" element={<Detail />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/profile" element={<Profile />} />
         
         <Route path="*" element={<NotFound />} />
       </Routes>
