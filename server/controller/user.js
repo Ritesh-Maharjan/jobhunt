@@ -31,16 +31,22 @@ const updateUser = asyncHandler(async (req, res, next) => {
   if (name || password || roles)
     return res.status(400).json({ msg: "Unable to update these fields" });
 
+
   if (req.file) {
-    const user = await User.findByIdAndUpdate(id, {...req.body, avatar: req.file.path });
+    const user = await User.findByIdAndUpdate(id, {
+      ...req.body,
+      avatar: req.file.path,
+    });
     if (!user.avatar) {
       fs.unlinkSync(user.avatar);
     }
-    if (!user) return res.status(400).json({ msg: "No job found with that id" });
+    if (!user)
+      return res.status(400).json({ msg: "No job found with that id" });
     res.json({ msg: "Updated successfully" });
   } else {
     const user = await User.findByIdAndUpdate(id, req.body);
-    if (!user) return res.status(400).json({ msg: "No job found with that id" });
+    if (!user)
+      return res.status(400).json({ msg: "No job found with that id" });
     res.json({ msg: "Updated successfully" });
   }
 });
