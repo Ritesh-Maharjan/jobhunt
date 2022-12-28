@@ -57,7 +57,7 @@ function Signup() {
         actions.setFieldError("phone", errors.phone.message);
       }
     } else {
-      navigate("/");
+      navigate("/login");
     }
   };
 
