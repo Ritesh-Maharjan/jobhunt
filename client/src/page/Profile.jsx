@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 import Popup from "../component/Popup";
 import { togglePopup } from "../redux/slicer/popupSlice";
 import { loggingOut } from "../redux/slicer/authSlice";
+import { deleteApplication } from "../api/applicationApi";
 
 function Profile() {
   const [user, setUser] = useState();
@@ -92,13 +93,14 @@ function Profile() {
   };
 
   const accountDelete = async () => {
-
-    const resData = await deleteUser(token)
-    if(resData.data){
-        localStorage.removeItem("user")
-        dispatch(loggingOut())
-        dispatch(togglePopup(false));
-        navigate("/")
+    const resData = await deleteUser(token);
+    if (resData.data) {
+      const delet = await deleteApplication(token);
+      console.log(delet)
+      localStorage.removeItem("user");
+      dispatch(loggingOut());
+      dispatch(togglePopup(false));
+      navigate("/");
     }
   };
 

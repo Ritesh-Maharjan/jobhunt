@@ -11,7 +11,7 @@ function Detail() {
   const [roles, setRole] = useState();
   const [popup, setPopup] = useState(false);
   const [errorMsg, setErrorMsg] = useState();
-  const [apply, setApply] = useState(false)
+  const [apply, setApply] = useState()
   const navigate = useNavigate();
 
   const token = useSelector((state) => state.auth.user);
@@ -25,7 +25,7 @@ function Detail() {
 
     const checkIfApplied = async (id,token) => {
       const success = await isApplied(id, token)
-      setApply(success)
+      setApply(success.data)
     }
 
     if (decodedToken) {
@@ -34,7 +34,7 @@ function Detail() {
     }
 
     fetchData(params.id);
-  }, [params.id, decodedToken, token]);
+  }, [params.id, decodedToken, token, apply]);
 
   const adminDeleteJobBtn = async () => {
     const success = await adminDeleteJob(params.id, token);
@@ -42,7 +42,6 @@ function Detail() {
     if (success.data) {
       navigate("/");
     }
-    console.log(success);
   };
 
   const deleteJobBtn = async () => {
@@ -62,6 +61,7 @@ function Detail() {
   const applyJobBtn = async () => {
       if(token){
       await applyJob(params.id, token)
+      setApply(true)
       alert("Applied to job successfully")
     }else{
       alert("Please login to apply");
