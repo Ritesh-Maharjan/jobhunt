@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { adminDeleteUser, getAllUser } from "../api/userApi";
 import Popup from "../component/Popup";
 import { togglePopup } from "../redux/slicer/popupSlice";
@@ -9,6 +10,7 @@ import { togglePopup } from "../redux/slicer/popupSlice";
 function Users() {
   const [users, setUsers] = useState([]);
   const [deleteId, setDeleteId] = useState();
+  const navigate = useNavigate();
   const token = useSelector((state) => state.auth.user);
   const popup = useSelector((state) => state.popup.popup);
   const dispatch = useDispatch()
@@ -17,10 +19,15 @@ function Users() {
   useEffect(() => {
     const fetchData = async () => {
       const resData = await getAllUser(token);
-      setUsers(resData.data);
+      if(resData?.response?.status === 403){
+        navigate("/forbidden")
+      }else{
+        navigate("/users")
+        setUsers(resData.data);
+      }
     };
     fetchData();
-  }, [token,popup]);
+  }, [token,popup,navigate]);
 
   const removeUser = async () => {
     const resData = await adminDeleteUser(token, deleteId)

@@ -77,15 +77,15 @@ function Profile() {
   useEffect(() => {
     const callUserApi = async () => {
       const resData = await getUser(token);
-      console.log(resData);
       if (resData.data) {
         setUser(resData.data);
+        navigate("/profile")
       }
     };
     if (token) {
       callUserApi();
     }
-  }, [token]);
+  }, [token, navigate]);
 
   const deleteAccBtn = async (e) => {
     e.preventDefault();

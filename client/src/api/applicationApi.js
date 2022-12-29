@@ -1,6 +1,23 @@
 import axios from "axios";
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
+
+const getAllApplicaitons = async (token) => {
+  try{
+
+    const getAllApp = await axios.get(
+      `${SERVER_URL}/job/applications`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return getAllApp;
+
+  }catch(err){
+    return err
+  }
+}
+
 const deleteApplication = async (token) => {
   try {
     const deleteApp = await axios.delete(
@@ -15,4 +32,4 @@ const deleteApplication = async (token) => {
   }
 };
 
-export { deleteApplication };
+export { deleteApplication, getAllApplicaitons };

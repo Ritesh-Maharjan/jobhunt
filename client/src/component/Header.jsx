@@ -75,7 +75,7 @@ function Header() {
                 </Link>
                 {roles === "Job seeker" ? (
                   <Link
-                    to="/appliedjobs"
+                    to="/applications"
                   onClick={() => setDisplayMenu(false)}
                   className="block px-4 py-2 text-sm  text-gray-700 hover:bg-gray-400 hover:text-white"
                   >
