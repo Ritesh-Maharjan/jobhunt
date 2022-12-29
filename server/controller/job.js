@@ -79,14 +79,13 @@ const getJob = asyncHandler(async (req, res, next) => {
  * @param body: object
  */
 const createJob = asyncHandler(async (req, res, next) => {
-  const { jobTitle, jobCategory, jobType, salary, deadline, education } =
+  const { jobTitle, jobCategory, salary, deadline, education } =
     req.body;
 
   const userId = req.user.id;
   if (
     !jobTitle ||
     !jobCategory ||
-    !jobType ||
     !salary ||
     !deadline ||
     !education

@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useJwt } from "react-jwt";
-import { adminDeleteJob, applyJob, deleteJob, getJob, isApplied } from "../api/jobApi";
+import {
+  adminDeleteJob,
+  applyJob,
+  deleteJob,
+  getJob,
+  isApplied,
+} from "../api/jobApi";
 
 function Detail() {
   const params = useParams();
@@ -11,8 +17,9 @@ function Detail() {
   const [roles, setRole] = useState();
   const [popup, setPopup] = useState(false);
   const [errorMsg, setErrorMsg] = useState();
-  const [apply, setApply] = useState()
+  const [apply, setApply] = useState();
   const navigate = useNavigate();
+  const SERVER_URL = process.env.REACT_APP_IMAGE_URL;
 
   const token = useSelector((state) => state.auth.user);
 
@@ -23,14 +30,14 @@ function Detail() {
       setJob(data.data);
     };
 
-    const checkIfApplied = async (id,token) => {
-      const success = await isApplied(id, token)
-      setApply(success.data)
-    }
+    const checkIfApplied = async (id, token) => {
+      const success = await isApplied(id, token);
+      setApply(success.data);
+    };
 
     if (decodedToken) {
       setRole(decodedToken.roles);
-      checkIfApplied(params.id, token)
+      checkIfApplied(params.id, token);
     }
 
     fetchData(params.id);
@@ -53,24 +60,28 @@ function Detail() {
       setErrorMsg(success.response.data.msg);
       setPopup(false);
       setTimeout(() => {
-        navigate("/")
-      }, 5000)
+        navigate("/");
+      }, 5000);
     }
   };
 
   const applyJobBtn = async () => {
-      if(token){
-      await applyJob(params.id, token)
-      setApply(true)
-      alert("Applied to job successfully")
-    }else{
+    if (token) {
+      await applyJob(params.id, token);
+      setApply(true);
+      alert("Applied to job successfully");
+    } else {
       alert("Please login to apply");
     }
-  }
+  };
 
   return (
     <div className="m-4">
-      {errorMsg && <p className="text-red-400 font-black text-3xl flex justify-center my-2">Not Authorized, only can delete your own job</p>}
+      {errorMsg && (
+        <p className="text-red-400 font-black text-3xl flex justify-center my-2">
+          Not Authorized, only can delete your own job
+        </p>
+      )}
       <div className="flex w-[90vw] m-auto">
         <div
           className={`${
@@ -117,7 +128,7 @@ function Detail() {
           <div className=" flex items-center space-between w-full border-2 m-2 p-2 rounded-2xl drop-shadow-lg">
             <div className="flex flex-col w-[10vw] justify-center items-center px-2 mr-6">
               {job?.createdBy.avatar ? (
-                <img src={job?.createdBy.avatar} alt="Company Logo" />
+                <img src={`${SERVER_URL}${job?.createdBy.avatar}`} alt="Company Logo" />
               ) : (
                 <img
                   src="https://imgs.search.brave.com/lQJ580-JievQJ14gi6KKJrwsK5Yln9K2ECOia6lOlBg/rs:fit:474:225:1/g:ce/aHR0cHM6Ly90c2U0/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC5E/WkxXRnFZcUlHNGxf/eUphcU91SlhnSGFI/YSZwaWQ9QXBp"
@@ -144,9 +155,12 @@ function Detail() {
               <h2 className="flex items-center">
                 <span className="mr-3 w-32">Deadline:</span> {job?.deadline}
               </h2>
-              <h2 className="flex items-center">
-                <span className="mr-3 w-32">Experience:</span> {job?.experience}
-              </h2>
+              {job?.experience && (
+                <h2 className="flex items-center">
+                  <span className="mr-3 w-32">Experience:</span>{" "}
+                  {job?.experience}
+                </h2>
+              )}
               <h2 className="flex items-center">
                 <span className="mr-3 w-32">Education:</span> {job?.education}
               </h2>
@@ -161,16 +175,28 @@ function Detail() {
                 </>
               ) : roles === "Company" ? (
                 <>
+                  <Link
+                    className="border-2 px-3 py-1 my-2  hover:text-white hover:bg-black"
+                    to="/update"
+                  >
+                    Update Job
+                  </Link>
                   <button
-                    className="border-2 px-3 py-1 my-2 bg-red-500 hover:text-white hover:bg-black"
+                    className="border-2 px-3 py-1 my-2 bg-red-500 ml-3 hover:text-white hover:bg-black"
                     onClick={() => setPopup(true)}
                   >
                     Delete Job
                   </button>
                 </>
+              ) : apply ? (
+                <button className="border-2 px-3 py-1 my-2 bg-red-600" disabled>
+                  Already applied
+                </button>
               ) : (
-                apply ? <button className="border-2 px-3 py-1 my-2 bg-red-600" disabled>Already applied</button> :
-                <button className="border-2 px-3 py-1 my-2 hover:text-white hover:bg-black" onClick={applyJobBtn}>
+                <button
+                  className="border-2 px-3 py-1 my-2 hover:text-white hover:bg-black"
+                  onClick={applyJobBtn}
+                >
                   Apply
                 </button>
               )}

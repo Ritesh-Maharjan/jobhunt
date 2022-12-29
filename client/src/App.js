@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Header from "./component/Header";
+import Add from "./page/Add";
 import Detail from "./page/Detail";
 import Forbidden from "./page/Forbidden";
 import Homepage from "./page/Homepage";
@@ -21,6 +22,7 @@ function App() {
           <Route path="users" element={<Users />} />
           <Route path="profile" element={<Profile />} />
           <Route path="applications" element={<JobApplications />} />
+          <Route path="addjob" element={<Add />} />
         </Route>
 
         <Route path="job/:id" element={<Detail />} />

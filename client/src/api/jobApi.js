@@ -71,4 +71,16 @@ const isApplied = async (data,token) => {
   }
 }
 
-export { getAllJobs, getJob, adminDeleteJob, deleteJob, applyJob, isApplied };
+const createJob = async (data, token) => {
+  try{
+    const creatJob = await axios.post(`${SERVER_URL}/job`,data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return creatJob;
+
+  }catch(err){
+    return err
+  }
+}
+
+export { getAllJobs, getJob, adminDeleteJob, deleteJob, applyJob, isApplied,createJob };

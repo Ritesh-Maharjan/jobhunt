@@ -20,10 +20,6 @@ const JobSchema = mongoose.Schema(
       type: Number,
       default: 1,
     },
-    jobType: {
-      type: String,
-      enum: ["Full Time", "Part Time", "Intern"],
-    },
     salary: {
       type: String,
       required: true,
@@ -39,13 +35,6 @@ const JobSchema = mongoose.Schema(
     experience: {
       type: String,
       default: "Not required",
-    },
-    otherSpecification: { type: String },
-    jobDescription: { type: String },
-    benefits: { type: String },
-    featured: {
-      type: Boolean,
-      default: false,
     },
   },
   {
