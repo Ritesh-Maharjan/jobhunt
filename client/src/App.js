@@ -10,6 +10,7 @@ import NotFound from "./page/NotFound";
 import Profile from "./page/Profile";
 import ProtectedRoute from "./page/ProtectedRoute";
 import Signup from "./page/Signup";
+import Update from "./page/Update";
 import Users from "./page/Users";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="applications" element={<JobApplications />} />
           <Route path="addjob" element={<Add />} />
+          <Route path="update/:id" element={<Update />} />
         </Route>
 
         <Route path="job/:id" element={<Detail />} />

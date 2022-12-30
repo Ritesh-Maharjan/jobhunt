@@ -177,7 +177,7 @@ function Detail() {
                 <>
                   <Link
                     className="border-2 px-3 py-1 my-2  hover:text-white hover:bg-black"
-                    to="/update"
+                    to={`/update/${job._id}`}
                   >
                     Update Job
                   </Link>

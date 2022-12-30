@@ -17,18 +17,18 @@ const getAllJobs = async (search, token) => {
   }
 };
 
-const getJob = async (data, token) => {
+const getJob = async (param) => {
   try {
-    const allJobs = await axios.get(`${SERVER_URL}/job/${data}`);
+    const allJobs = await axios.get(`${SERVER_URL}/job/${param}`);
     return allJobs;
   } catch (err) {
     return err;
   }
 };
 
-const adminDeleteJob = async (data, token) => {
+const adminDeleteJob = async (param, token) => {
   try {
-    const allJobs = await axios.delete(`${SERVER_URL}/admin/jobs/${data}`, {
+    const allJobs = await axios.delete(`${SERVER_URL}/admin/jobs/${param}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return allJobs;
@@ -37,9 +37,9 @@ const adminDeleteJob = async (data, token) => {
   }
 };
 
-const deleteJob = async (data,token) => {
+const deleteJob = async (param,token) => {
   try {
-    const allJobs = await axios.delete(`${SERVER_URL}/job/${data}`, {
+    const allJobs = await axios.delete(`${SERVER_URL}/job/${param}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return allJobs;
@@ -48,9 +48,9 @@ const deleteJob = async (data,token) => {
   }
 }
 
-const applyJob = async (data,token) => {
+const applyJob = async (param,token) => {
   try {
-    const apply = await axios.post(`${SERVER_URL}/job/${data}/apply`, {}, {
+    const apply = await axios.post(`${SERVER_URL}/job/${param}/apply`, {}, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return apply;
@@ -59,9 +59,9 @@ const applyJob = async (data,token) => {
   }
 }
 
-const isApplied = async (data,token) => {
+const isApplied = async (param,token) => {
   try{
-    const apply = await axios.get(`${SERVER_URL}/job/${data}/applied`, {
+    const apply = await axios.get(`${SERVER_URL}/job/${param}/applied`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return apply;
@@ -83,4 +83,16 @@ const createJob = async (data, token) => {
   }
 }
 
-export { getAllJobs, getJob, adminDeleteJob, deleteJob, applyJob, isApplied,createJob };
+const updateJob = async (id, data, token) => {
+  try{
+    const creatJob = await axios.post(`${SERVER_URL}/job/${id}`,data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return creatJob;
+
+  }catch(err){
+    return err
+  }
+}
+
+export { getAllJobs, getJob, adminDeleteJob, deleteJob, applyJob, isApplied,createJob,updateJob };
