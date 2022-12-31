@@ -85,7 +85,7 @@ const createJob = async (data, token) => {
 
 const updateJob = async (id, data, token) => {
   try{
-    const creatJob = await axios.post(`${SERVER_URL}/job/${id}`,data, {
+    const creatJob = await axios.put(`${SERVER_URL}/job/${id}`,data, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return creatJob;

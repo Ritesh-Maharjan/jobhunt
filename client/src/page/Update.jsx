@@ -8,22 +8,30 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
-function Update () {
+function Update() {
   const token = useSelector((state) => state.auth.user);
-  const [success, setSuccess] = useState()
-  const [apiData, setApiData]= useState();
+  const [success, setSuccess] = useState();
+  const [apiData, setApiData] = useState();
   const param = useParams();
 
-   const initialValues = apiData;
+  const initialValues = {
+    jobTitle: apiData?.jobTitle,
+    deadline: apiData?.deadline.split("T")[0],
+    education: apiData?.education,
+    experience: apiData?.experience || "",
+    jobCategory: apiData?.jobCategory,
+    salary: apiData?.salary,
+    jobType: apiData?.jobType,
+    vacancies: apiData?.vacancies,
+  };
   useEffect(() => {
-    const getJobApi = async() =>{
-        const data = await getJob(param.id)
-        setApiData(data.data)
-    } 
+    const getJobApi = async () => {
+      const data = await getJob(param.id);
+      setApiData(data.data);
+    };
     getJobApi();
-  },[param.id])
+  }, [param.id]);
 
-  // validation for all input except image since it's not required
   const validationSchema = Yup.object({
     jobTitle: Yup.string().required(),
     jobCategory: Yup.string().required(),
@@ -32,16 +40,24 @@ function Update () {
   });
 
   const onSubmit = async (values) => {
-    console.log(values)
-    return console.log(values)
-    const resData = await updateJob(param.id, values, token);
+    const data = {
+      jobTitle: values.jobTitle,
+      deadline: values.deadline,
+      education: values.education,
+      experience: values.experience,
+      jobCategory: values.jobCategory,
+      salary: values.salary,
+      jobType: values.jobType,
+      vacancies: values.vacancies,
+    };
+
+    const resData = await updateJob(param.id, data, token);
     if (resData.data) {
       setSuccess("Updated successfully!!!");
       setTimeout(() => {
-        setSuccess(false)
+        setSuccess(false);
       }, 5000);
     }
-    console.log(resData);
   };
 
   const renderError = (message) => <p className="text-red-400">{message}</p>;
@@ -53,18 +69,20 @@ function Update () {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={async (values) => {
-            console.log(values)
-            //   await onSubmit(values);
-            }}
+            await onSubmit(values);
+          }}
+          enableReinitialize={true}
         >
           <Form className="w-[90vw] border-2 border-black rounded-lg shadow-2xl p-6 m-auto">
-            {success && <div
-              className="p-4 mb-4 text-sm bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
-              role="alert"
-            >
-              <span className="font-medium">Created successfully!</span>
-            </div>}
-            
+            {success && (
+              <div
+                className="p-4 mb-4 text-sm bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                role="alert"
+              >
+                <span className="font-medium">{success}</span>
+              </div>
+            )}
+
             <h1 className="font-bold text-3xl my-4">Update job</h1>
             <div className="my-4">
               <label className="block text-gray-500 font-bold">
@@ -76,7 +94,6 @@ function Update () {
                   type="text"
                   name="jobTitle"
                   placeholder="Enter your job title"
-                  value={initialValues?.jobTitle || ''}
                 />
                 <ErrorMessage name="jobTitle" render={renderError} />
               </div>
@@ -91,7 +108,6 @@ function Update () {
                   type="number"
                   name="vacancies"
                   placeholder="Enter total number of vacancy"
-                  value={initialValues?.vacancies || ''}
                 />
                 <ErrorMessage name="vacancies" render={renderError} />
               </div>
@@ -106,7 +122,6 @@ function Update () {
                   type="text"
                   name="jobCategory"
                   placeholder="Enter your job category"
-                  value={initialValues?.jobCategory || ''}
                 />
                 <ErrorMessage name="jobCategory" render={renderError} />
               </div>
@@ -119,7 +134,6 @@ function Update () {
                   type="text"
                   name="salary"
                   placeholder="Enter the salary amount"
-                  value={initialValues?.salary || ''}
                 />
                 <ErrorMessage name="salary" render={renderError} />
               </div>
@@ -132,7 +146,6 @@ function Update () {
                   type="date"
                   name="deadline"
                   placeholder="Enter job deadline"
-                  value={initialValues?.deadline?.split("T")[0] || ''}
                 />
                 <ErrorMessage name="deadline" render={renderError} />
               </div>
@@ -147,7 +160,6 @@ function Update () {
                   type="text"
                   name="experience"
                   placeholder="Enter required experience"
-                  value={initialValues?.experience || ''}
                 />
                 <ErrorMessage name="experience" render={renderError} />
               </div>
@@ -161,7 +173,6 @@ function Update () {
                   className="border-2 w-full p-2  "
                   as="select"
                   name="education"
-                  value={initialValues?.education || ''}
                 >
                   <option value="High school">High school</option>
                   <option value="Bachelor">Bachelor</option>
@@ -185,4 +196,4 @@ function Update () {
   );
 }
 
-export default Update   ;
+export default Update;
