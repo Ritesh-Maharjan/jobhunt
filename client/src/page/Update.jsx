@@ -5,7 +5,7 @@ import { getJob, updateJob } from "../api/jobApi";
 import { useSelector } from "react-redux";
 // import { useJwt } from "react-jwt";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 
 function Update() {
@@ -13,8 +13,9 @@ function Update() {
   const [success, setSuccess] = useState();
   const [apiData, setApiData] = useState();
   const param = useParams();
+  const navigate = useNavigate()
 
-  const initialValues = {
+  const initialValues =  {
     jobTitle: apiData?.jobTitle,
     deadline: apiData?.deadline.split("T")[0],
     education: apiData?.education,
@@ -26,11 +27,16 @@ function Update() {
   };
   useEffect(() => {
     const getJobApi = async () => {
-      const data = await getJob(param.id);
-      setApiData(data.data);
+      const resData = await getJob(param.id);
+      if(resData?.response?.status === 403){
+        navigate("/forbidden")
+      }else{
+        navigate(`/update/${param.id}`)
+        setApiData(resData.data);
+      }
     };
     getJobApi();
-  }, [param.id]);
+  }, [param.id,navigate]);
 
   const validationSchema = Yup.object({
     jobTitle: Yup.string().required(),
@@ -52,6 +58,9 @@ function Update() {
     };
 
     const resData = await updateJob(param.id, data, token);
+    if(resData.response?.status === 401){
+        navigate("/forbidden")
+    }
     if (resData.data) {
       setSuccess("Updated successfully!!!");
       setTimeout(() => {
