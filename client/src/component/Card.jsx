@@ -34,7 +34,7 @@ function Card({ data }) {
           </h2>
           <h2 className="flex items-center">
             <span className="mr-3 w-32">Deadline:</span>
-            {data?.deadline}
+            {data?.deadline.split("T")[0]}
           </h2>
 
           {data?.experience && (

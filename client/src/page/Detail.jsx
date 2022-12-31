@@ -153,7 +153,7 @@ function Detail() {
                 <span className="mr-3 w-32">Salary:</span> {job?.salary}
               </h2>
               <h2 className="flex items-center">
-                <span className="mr-3 w-32">Deadline:</span> {job?.deadline}
+                <span className="mr-3 w-32">Deadline:</span> {job?.deadline.split("T")[0]}
               </h2>
               {job?.experience && (
                 <h2 className="flex items-center">

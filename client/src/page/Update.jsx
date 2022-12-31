@@ -36,6 +36,7 @@ function Update() {
     jobTitle: Yup.string().required(),
     jobCategory: Yup.string().required(),
     salary: Yup.string().required(),
+    vacancies: Yup.number().min(1).required(),
     deadline: Yup.date().required(),
   });
 
@@ -47,7 +48,6 @@ function Update() {
       experience: values.experience,
       jobCategory: values.jobCategory,
       salary: values.salary,
-      jobType: values.jobType,
       vacancies: values.vacancies,
     };
 
