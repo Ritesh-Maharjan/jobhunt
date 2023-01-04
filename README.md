@@ -5,10 +5,18 @@
 
 # Login details
 
-Admin: admin@admin.com password
+**Admin login details**
+
+admin@admin.com password
+
+**Companies login detail**
+
 Apple: apple@apple.com password
 Google: google@google.com password
-JobSeeker: js@js.com password
+
+**Job seeker login details**
+
+js@js.com password
 
 # Functionality of the project
 
@@ -17,6 +25,7 @@ JobSeeker: js@js.com password
 * Job Seeker can apply jobs, see all the application to the jobs they applied.
 * Company and Job seeker can delete their profile
 * Admin, Company and Job seeker can update their profile.
+* Every one can upload images and change images.
 * Basic search funcitonality for the jobs, and when logged in as company they can see all the job postings from them
 
 # Struggles when creating this project
