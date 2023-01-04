@@ -3,20 +3,17 @@
 > Project is about job seeker that can apply jobs and company posting jobs. 
 <hr>
 
+
+Giving admin login info since admin can not be created. Please use the below username and password to login to the app
+
 # Login details
 
 **Admin login details**
 
-admin@admin.com password
+Email: admin@admin.com 
 
-**Companies login detail**
+Password: password
 
-Apple: apple@apple.com password
-Google: google@google.com password
-
-**Job seeker login details**
-
-js@js.com password
 
 # Functionality of the project
 
@@ -26,7 +23,8 @@ js@js.com password
 * Company and Job seeker can delete their profile
 * Admin, Company and Job seeker can update their profile.
 * Every one can upload images and change images.
-* Basic search funcitonality for the jobs, and when logged in as company they can see all the job postings from them
+* Basic search funcitonality for the jobs, and when logged in as company they can see all the job postings created by them
+* Input validation on both frontend and backend using Formik and Yup.
 
 # Struggles when creating this project
 
