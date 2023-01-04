@@ -3,6 +3,13 @@
 > Project is about job seeker that can apply jobs and company posting jobs. 
 <hr>
 
+# Login details
+
+Admin: admin@admin.com password
+Apple: apple@apple.com password
+Google: google@google.com password
+JobSeeker: js@js.com password
+
 # Functionality of the project
 
 * Admin can delete jobs and users
